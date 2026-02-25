@@ -477,6 +477,7 @@ func (b *jwtAuthBackend) createOIDCRequest(config *jwtConfig, role *jwtRole, rol
 	options := []oidc.Option{
 		oidc.WithAudiences(role.BoundAudiences...),
 		oidc.WithScopes(role.OIDCScopes...),
+		oidc.WithClaims([]byte(role.OIDCClaims)),
 	}
 
 	if config.hasType(responseTypeIDToken) {

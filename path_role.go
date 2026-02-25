@@ -150,6 +150,10 @@ for referencing claims.`,
 				Type:        framework.TypeCommaStringSlice,
 				Description: `Comma-separated list of OIDC scopes`,
 			},
+			"oidc_claims": {
+				Type:        framework.TypeString,
+				Description: `JSON string of OIDC claims to request`,
+			},
 			"allowed_redirect_uris": {
 				Type:        framework.TypeCommaStringSlice,
 				Description: `Comma-separated list of allowed values for redirect_uri`,
@@ -221,6 +225,7 @@ type jwtRole struct {
 	UserClaim            string                 `json:"user_claim"`
 	GroupsClaim          string                 `json:"groups_claim"`
 	OIDCScopes           []string               `json:"oidc_scopes"`
+	OIDCClaims           string                 `json:"oidc_claims"`
 	AllowedRedirectURIs  []string               `json:"allowed_redirect_uris"`
 	VerboseOIDCLogging   bool                   `json:"verbose_oidc_logging"`
 	MaxAge               time.Duration          `json:"max_age"`
@@ -331,6 +336,7 @@ func (b *jwtAuthBackend) pathRoleRead(ctx context.Context, req *logical.Request,
 		"groups_claim":            role.GroupsClaim,
 		"allowed_redirect_uris":   role.AllowedRedirectURIs,
 		"oidc_scopes":             role.OIDCScopes,
+		"oidc_claims":             role.OIDCClaims,
 		"verbose_oidc_logging":    role.VerboseOIDCLogging,
 		"max_age":                 int64(role.MaxAge.Seconds()),
 	}
@@ -535,6 +541,10 @@ func (b *jwtAuthBackend) pathRoleCreateUpdate(ctx context.Context, req *logical.
 
 	if oidcScopes, ok := data.GetOk("oidc_scopes"); ok {
 		role.OIDCScopes = oidcScopes.([]string)
+	}
+
+	if oidcClaims, ok := data.GetOk("oidc_claims"); ok {
+		role.OIDCClaims = oidcClaims.(string)
 	}
 
 	if allowedRedirectURIs, ok := data.GetOk("allowed_redirect_uris"); ok {
